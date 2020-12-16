@@ -2,7 +2,7 @@ package com.takeaway.challenge.context;
 
 import com.takeaway.challenge.EmployeeEventKey;
 import com.takeaway.challenge.EmployeeEventValue;
-import com.takeaway.challenge.exception.TakeAwayServerRuntimeException;
+import com.takeaway.challenge.exception.TakeAwayRuntimeException;
 import io.confluent.kafka.schemaregistry.client.CachedSchemaRegistryClient;
 import io.confluent.kafka.schemaregistry.client.SchemaRegistryClient;
 import io.confluent.kafka.serializers.KafkaAvroDeserializer;
@@ -115,6 +115,7 @@ public class EmployeeAvroKafkaListenerContext {
 
         factory.setConsumerFactory(consumerFactory(kafkaProperties));
         factory.setAckDiscarded(true);
+        factory.setErrorHandler(errorHandler());                // Setting up error handler
 
         factory.getContainerProperties().setAckMode(ContainerProperties.AckMode.RECORD);
 
@@ -133,7 +134,7 @@ public class EmployeeAvroKafkaListenerContext {
                 new SeekToCurrentErrorHandler(new FixedBackOff(DEFAULT_RETRY_DELAY, DEFAULT_RETRY_MAX));
 
         // Adding exception for not to retry
-        handler.addNotRetryableException(TakeAwayServerRuntimeException.class);
+        handler.addNotRetryableException(TakeAwayRuntimeException.class);
         handler.addNotRetryableException(ConstraintViolationException.class);
 
         return handler;
