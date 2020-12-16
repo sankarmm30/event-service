@@ -104,7 +104,7 @@ public class EmployeeEventServiceImplTest {
 
         employeeEventEntityList.add(
                 EmployeeEventEntity.builder()
-                        .eventId(EVENT_CREATED_ID)
+                        .eventId(EVENT_UPDATED_ID)
                         .employeeId(EMPLOYEE_ID)
                         .eventType(EVENT_TYPE_UPDATED)
                         .appName(APP_NAME)
