@@ -1,10 +1,12 @@
 package com.takeaway.challenge.service.impl;
 
 import com.takeaway.challenge.exception.EmployeeEventNotFoundException;
+import com.takeaway.challenge.exception.TakeAwayClientRuntimeException;
 import com.takeaway.challenge.model.EmployeeEventEntity;
 import com.takeaway.challenge.repository.EmployeeEventEntityRepository;
 import com.takeaway.challenge.service.EmployeeEventService;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import java.util.List;
 
@@ -21,14 +23,23 @@ public class EmployeeEventServiceImpl implements EmployeeEventService {
     @Override
     public List<EmployeeEventEntity> getEventListByEmployeeId(String employeeId) {
 
-        List<EmployeeEventEntity> employeeEventEntityList =
-                this.employeeEventEntityRepository.findByEmployeeIdOrderByEventTimeAsc(employeeId);
+        if(StringUtils.hasText(employeeId)) {
 
-        if (!employeeEventEntityList.isEmpty()) {
+            List<EmployeeEventEntity> employeeEventEntityList =
+                    this.employeeEventEntityRepository.findByEmployeeIdOrderByEventTimeAsc(employeeId);
 
-            return employeeEventEntityList;
+            // Return the list of data if data exists for the given employeeId
+            // else throw EmployeeEventNotFoundException
+
+            if (!employeeEventEntityList.isEmpty()) {
+
+                return employeeEventEntityList;
+            }
+
+            throw new EmployeeEventNotFoundException();
+        }else {
+
+            throw new TakeAwayClientRuntimeException("Employee Id cannot be null or empty");
         }
-
-        throw new EmployeeEventNotFoundException();
     }
 }
