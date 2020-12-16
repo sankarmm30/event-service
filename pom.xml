@@ -27,7 +27,7 @@
         <maven-compiler-plugin.version>3.7.0</maven-compiler-plugin.version>
         <javax-validation-api.version>2.0.1.Final</javax-validation-api.version>
         <jackson-datatype-jdk8.version>2.11.3</jackson-datatype-jdk8.version>
-        <mockito.version>2.23.4</mockito.version>
+        <mockito.version>3.1.0</mockito.version>
         <avro.version>1.8.2</avro.version>
         <confluent.version>5.2.2</confluent.version>
         <spring-kafka.version>2.5.7.RELEASE</spring-kafka.version>
@@ -116,6 +116,7 @@
             <groupId>org.mockito</groupId>
             <artifactId>mockito-core</artifactId>
             <version>${mockito.version}</version>
+            <scope>test</scope>
         </dependency>
 
         <!-- avro -->

@@ -41,6 +41,7 @@ public class EmployeeAvroKafkaListenerContext {
 
     private static final Logger LOG = LoggerFactory.getLogger(EmployeeAvroKafkaListenerContext.class);
 
+    private static final String AUTO_REGISTER_SCHEMA_PROP_NAME = "kafka.consumer.auto.register.schemas";
     private static final String SPECIFIC_AVRO_READER_CONFIG_VALUE = "true";
     private static final String DEFAULT_SCHEMA_REGISTRY_URL = "http://localhost:8081";
     private static final int DEFAULT_RETRY_MAX = 3;
@@ -65,7 +66,7 @@ public class EmployeeAvroKafkaListenerContext {
         Map<String, Object> props = new HashMap<>();
 
         props.put(KafkaAvroDeserializerConfig.SCHEMA_REGISTRY_URL_CONFIG, environment.getProperty(KafkaAvroDeserializerConfig.SCHEMA_REGISTRY_URL_CONFIG, DEFAULT_SCHEMA_REGISTRY_URL));
-        props.put(KafkaAvroDeserializerConfig.AUTO_REGISTER_SCHEMAS, false);
+        props.put(KafkaAvroDeserializerConfig.AUTO_REGISTER_SCHEMAS, environment.getProperty(AUTO_REGISTER_SCHEMA_PROP_NAME, boolean.class, false));
         props.put(KafkaAvroDeserializerConfig.SPECIFIC_AVRO_READER_CONFIG, SPECIFIC_AVRO_READER_CONFIG_VALUE);
         props.put(KafkaAvroDeserializerConfig.KEY_SUBJECT_NAME_STRATEGY, TopicRecordNameStrategy.class.getName());
         props.put(KafkaAvroDeserializerConfig.VALUE_SUBJECT_NAME_STRATEGY, TopicRecordNameStrategy.class.getName());

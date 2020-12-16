@@ -12,9 +12,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * This controller provides endpoint for managing the employee event service
+ */
 @RestController
 @RequestMapping(value = "/employee-event")
 public class EmployeeEventController {
@@ -29,7 +34,8 @@ public class EmployeeEventController {
     }
 
     @GetMapping(value = "/details", produces = "application/json", consumes = "application/json")
-    public ResponseEntity<EmployeeEventDataResponseDto> getEmployeeEventDetails(final @RequestParam String employeeId) {
+    public ResponseEntity<EmployeeEventDataResponseDto> getEmployeeEventDetails(
+            @Valid @NotBlank(message = "Employee Id cannot be null or empty") final @RequestParam String employeeId) {
 
         List<EmployeeEventEntity> employeeEventEntityList = this.employeeEventService.getEventListByEmployeeId(employeeId);
 

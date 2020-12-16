@@ -24,7 +24,6 @@ public class EmployeeEventEntityRepositoryIntegrationTest {
     private static final String EVENT_TYPE_UPDATED = "UPDATED";
     private static final String APP_NAME = "testapp";
 
-
     @Autowired
     private EmployeeEventEntityRepository employeeEventEntityRepository;
 
