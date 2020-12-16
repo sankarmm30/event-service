@@ -29,7 +29,7 @@
         <jackson-datatype-jdk8.version>2.11.3</jackson-datatype-jdk8.version>
         <mockito.version>2.23.4</mockito.version>
         <avro.version>1.8.2</avro.version>
-        <kafka-avro-serializer.version>5.2.2</kafka-avro-serializer.version>
+        <confluent.version>5.2.2</confluent.version>
         <spring-kafka.version>2.5.7.RELEASE</spring-kafka.version>
         <spring-kafka-test.version>2.5.7.RELEASE</spring-kafka-test.version>
     </properties>
@@ -127,8 +127,9 @@
         <dependency>
             <groupId>io.confluent</groupId>
             <artifactId>kafka-avro-serializer</artifactId>
-            <version>${kafka-avro-serializer.version}</version>
+            <version>${confluent.version}</version>
         </dependency>
+
     </dependencies>
 
     <repositories>

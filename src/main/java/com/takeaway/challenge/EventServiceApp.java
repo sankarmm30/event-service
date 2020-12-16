@@ -1,9 +1,11 @@
-package com.takeaway.eventservice;
+package com.takeaway.challenge;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.kafka.annotation.EnableKafka;
 
 @SpringBootApplication
+@EnableKafka
 public class EventServiceApp {
 
     public static void main(String[] args) {
