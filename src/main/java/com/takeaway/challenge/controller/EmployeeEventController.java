@@ -4,8 +4,11 @@ import com.takeaway.challenge.dto.response.EmployeeEvent;
 import com.takeaway.challenge.dto.response.EmployeeEventDataResponseDto;
 import com.takeaway.challenge.model.EmployeeEventEntity;
 import com.takeaway.challenge.service.EmployeeEventService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,8 +23,9 @@ import java.util.stream.Collectors;
 /**
  * This controller provides endpoint for managing the employee event service
  */
-@RestController
+@RestController("employeeEventController")
 @RequestMapping(value = "/employee-event")
+@Api(value = "Employee event controller", description = "This controller provides endpoint to get the employee event data")
 public class EmployeeEventController {
 
     private static final Logger LOG = LoggerFactory.getLogger(EmployeeEventController.class);
@@ -33,7 +37,9 @@ public class EmployeeEventController {
         this.employeeEventService = employeeEventService;
     }
 
-    @GetMapping(value = "/details", produces = "application/json", consumes = "application/json")
+    @ApiOperation(value = "Get all events related to a specific employee in ascending order",
+            response = EmployeeEventDataResponseDto.class, produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/details", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<EmployeeEventDataResponseDto> getEmployeeEventDetails(
             @Valid @NotBlank(message = "Employee Id cannot be null or empty") final @RequestParam String employeeId) {
 
