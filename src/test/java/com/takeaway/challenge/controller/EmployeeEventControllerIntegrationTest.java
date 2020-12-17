@@ -7,6 +7,7 @@ import com.takeaway.challenge.exception.EmployeeEventNotFoundException;
 import com.takeaway.challenge.model.EmployeeEventEntity;
 import com.takeaway.challenge.repository.EmployeeEventEntityRepository;
 import com.takeaway.challenge.service.impl.EmployeeAvroKafkaListenerServiceImpl;
+import org.flywaydb.core.Flyway;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -54,6 +55,9 @@ public class EmployeeEventControllerIntegrationTest {
 
     @MockBean
     private EmployeeAvroKafkaListenerServiceImpl employeeAvroKafkaListenerService;
+
+    @MockBean
+    private Flyway flyway;
 
     @LocalServerPort
     private Integer port;
