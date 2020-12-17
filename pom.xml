@@ -32,6 +32,8 @@
         <confluent.version>5.2.2</confluent.version>
         <spring-kafka.version>2.5.7.RELEASE</spring-kafka.version>
         <spring-kafka-test.version>2.5.7.RELEASE</spring-kafka-test.version>
+        <spring-mock-mvc.version>3.3.0</spring-mock-mvc.version>
+        <base.package>com/takeaway/challenge</base.package>
     </properties>
 
     <dependencies>
@@ -119,6 +121,13 @@
             <scope>test</scope>
         </dependency>
 
+        <dependency>
+            <groupId>io.rest-assured</groupId>
+            <artifactId>spring-mock-mvc</artifactId>
+            <version>${spring-mock-mvc.version}</version>
+            <scope>test</scope>
+        </dependency>
+
         <!-- avro -->
         <dependency>
             <groupId>org.apache.avro</groupId>
@@ -169,6 +178,20 @@
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
                 <version>${jacoco.version}</version>
+                <configuration>
+                    <excludes>
+                        <exclude>${base.package}/constant/*</exclude>
+                        <exclude>${base.package}/context/*</exclude>
+                        <exclude>${base.package}/dto/**/*</exclude>
+                        <exclude>${base.package}/model/*</exclude>
+                        <exclude>${base.package}/repository/*</exclude>
+                        <exclude>${base.package}/EventServiceApp*</exclude>
+
+                        <!--Auto generated avro classes-->
+                        <exclude>${base.package}/EmployeeEvent*</exclude>
+
+                    </excludes>
+                </configuration>
                 <executions>
                     <execution>
                         <goals>

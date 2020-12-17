@@ -41,7 +41,7 @@ public class EmployeeAvroKafkaListenerServiceImpl {
                         @Header(KafkaHeaders.RECEIVED_PARTITION_ID) String partition,
                         @Header(KafkaHeaders.OFFSET) String offset) {
 
-        LOG.info("Message: '{}' from TOPIC '{}', PARTITION '{}', OFFSET {} has been received",
+        LOG.debug("Message: '{}' from TOPIC '{}', PARTITION '{}', OFFSET {} has been received",
                 employeeEventValue, topic, partition, offset);
 
         try{

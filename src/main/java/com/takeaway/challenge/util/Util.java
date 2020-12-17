@@ -4,6 +4,7 @@ import com.takeaway.challenge.constant.GlobalConstant;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 
@@ -39,5 +40,19 @@ public class Util {
     public static ZonedDateTime getZonedDateTime(final String dateValue) {
 
         return ZonedDateTime.parse(dateValue, DateTimeFormatter.ofPattern(GlobalConstant.DATE_TIME_FORMAT));
+    }
+
+    public static String getFormattedDate(final LocalDate date) {
+
+        return isNotNull(date)
+                ? date.format(DateTimeFormatter.ofPattern(GlobalConstant.DATE_FORMAT))
+                : null ;
+    }
+
+    public static String getFormattedTimestamp(final ZonedDateTime dateTime) {
+
+        return isNotNull(dateTime)
+                ? dateTime.format(DateTimeFormatter.ofPattern(GlobalConstant.DATE_TIME_FORMAT))
+                : null ;
     }
 }
