@@ -7,7 +7,7 @@ import java.util.List;
 public interface EmployeeEventService {
 
     /**
-     * This method in charge of fetching the list of employee event for the input employeeId
+     * This method in charge of fetching the events for the specific employeeId
      *
      * @param employeeId
      * @return

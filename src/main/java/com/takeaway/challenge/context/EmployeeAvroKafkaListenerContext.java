@@ -41,9 +41,12 @@ public class EmployeeAvroKafkaListenerContext {
 
     private static final Logger LOG = LoggerFactory.getLogger(EmployeeAvroKafkaListenerContext.class);
 
-    private static final String AUTO_REGISTER_SCHEMA_PROP_NAME = "kafka.consumer.auto.register.schemas";
-    private static final String SPECIFIC_AVRO_READER_CONFIG_VALUE = "true";
+    private static final String KAFKA_CONSUMER_PROP_PREFIX = "kafka.consumer.";
+    private static final String KAFKA_CONSUMER_ERROR_RETRY_PROP = "kafka.consumer.error.retry.attempts";
+    private static final String KAFKA_CONSUMER_ERROR_RETRY_DELAY_PROP = "kafka.consumer.error.retry.delay";
     private static final String DEFAULT_SCHEMA_REGISTRY_URL = "http://localhost:8081";
+    private static final Boolean SPECIFIC_AVRO_READER_CONFIG_VALUE = true;
+    private static final Boolean AUTO_REGISTER_SCHEMAS = false;
     private static final int DEFAULT_RETRY_MAX = 3;
     private static final int DEFAULT_RETRY_DELAY = 10000;
     private static final int IDENTITY_MAP_CAPACITY = 100;
@@ -62,14 +65,24 @@ public class EmployeeAvroKafkaListenerContext {
      * @return
      */
     @Bean
-    public Map<String, Object> schemaRegistryProps() {
+    public Map<String, Object> schemaRegistryProps(KafkaProperties kafkaProperties) {
         Map<String, Object> props = new HashMap<>();
 
-        props.put(KafkaAvroDeserializerConfig.SCHEMA_REGISTRY_URL_CONFIG, environment.getProperty(KafkaAvroDeserializerConfig.SCHEMA_REGISTRY_URL_CONFIG, DEFAULT_SCHEMA_REGISTRY_URL));
-        props.put(KafkaAvroDeserializerConfig.AUTO_REGISTER_SCHEMAS, environment.getProperty(AUTO_REGISTER_SCHEMA_PROP_NAME, boolean.class, false));
-        props.put(KafkaAvroDeserializerConfig.SPECIFIC_AVRO_READER_CONFIG, SPECIFIC_AVRO_READER_CONFIG_VALUE);
-        props.put(KafkaAvroDeserializerConfig.KEY_SUBJECT_NAME_STRATEGY, TopicRecordNameStrategy.class.getName());
-        props.put(KafkaAvroDeserializerConfig.VALUE_SUBJECT_NAME_STRATEGY, TopicRecordNameStrategy.class.getName());
+        props.put(KafkaAvroDeserializerConfig.SCHEMA_REGISTRY_URL_CONFIG,
+                environment.getProperty(KAFKA_CONSUMER_PROP_PREFIX + KafkaAvroDeserializerConfig.SCHEMA_REGISTRY_URL_CONFIG,
+                        DEFAULT_SCHEMA_REGISTRY_URL));
+        props.put(KafkaAvroDeserializerConfig.AUTO_REGISTER_SCHEMAS,
+                environment.getProperty(KAFKA_CONSUMER_PROP_PREFIX + KafkaAvroDeserializerConfig.AUTO_REGISTER_SCHEMAS,
+                        Boolean.class, AUTO_REGISTER_SCHEMAS));
+        props.put(KafkaAvroDeserializerConfig.SPECIFIC_AVRO_READER_CONFIG,
+                environment.getProperty(KAFKA_CONSUMER_PROP_PREFIX + KafkaAvroDeserializerConfig.SPECIFIC_AVRO_READER_CONFIG,
+                        Boolean.class, SPECIFIC_AVRO_READER_CONFIG_VALUE));
+        props.put(KafkaAvroDeserializerConfig.KEY_SUBJECT_NAME_STRATEGY,
+                environment.getProperty(KAFKA_CONSUMER_PROP_PREFIX + KafkaAvroDeserializerConfig.KEY_SUBJECT_NAME_STRATEGY,
+                        TopicRecordNameStrategy.class.getName()));
+        props.put(KafkaAvroDeserializerConfig.VALUE_SUBJECT_NAME_STRATEGY,
+                environment.getProperty(KAFKA_CONSUMER_PROP_PREFIX + KafkaAvroDeserializerConfig.VALUE_SUBJECT_NAME_STRATEGY,
+                        TopicRecordNameStrategy.class.getName()));
 
         return props;
     }
@@ -83,7 +96,8 @@ public class EmployeeAvroKafkaListenerContext {
     public SchemaRegistryClient schemaRegistryClient() {
 
         return new CachedSchemaRegistryClient(
-                environment.getProperty(KafkaAvroDeserializerConfig.SCHEMA_REGISTRY_URL_CONFIG, DEFAULT_SCHEMA_REGISTRY_URL),
+                environment.getProperty(KAFKA_CONSUMER_PROP_PREFIX + KafkaAvroDeserializerConfig.SCHEMA_REGISTRY_URL_CONFIG,
+                        DEFAULT_SCHEMA_REGISTRY_URL),
                 IDENTITY_MAP_CAPACITY);
     }
 
@@ -97,8 +111,8 @@ public class EmployeeAvroKafkaListenerContext {
     public ConsumerFactory<EmployeeEventKey, EmployeeEventValue> consumerFactory(KafkaProperties kafkaProperties) {
 
         return new DefaultKafkaConsumerFactory<>(kafkaProperties.buildConsumerProperties(),
-                (Deserializer) new KafkaAvroDeserializer(schemaRegistryClient(), schemaRegistryProps()),
-                (Deserializer) new KafkaAvroDeserializer(schemaRegistryClient(), schemaRegistryProps()));
+                (Deserializer) new KafkaAvroDeserializer(schemaRegistryClient(), schemaRegistryProps(kafkaProperties)),
+                (Deserializer) new KafkaAvroDeserializer(schemaRegistryClient(), schemaRegistryProps(kafkaProperties)));
     }
 
     /**
@@ -132,7 +146,10 @@ public class EmployeeAvroKafkaListenerContext {
     public SeekToCurrentErrorHandler errorHandler() {
 
         SeekToCurrentErrorHandler handler =
-                new SeekToCurrentErrorHandler(new FixedBackOff(DEFAULT_RETRY_DELAY, DEFAULT_RETRY_MAX));
+                new SeekToCurrentErrorHandler(
+                        new FixedBackOff(
+                                environment.getProperty(KAFKA_CONSUMER_ERROR_RETRY_DELAY_PROP, Integer.class, DEFAULT_RETRY_DELAY),
+                                environment.getProperty(KAFKA_CONSUMER_ERROR_RETRY_PROP, Integer.class, DEFAULT_RETRY_MAX)));
 
         // Adding exception for not to retry
         handler.addNotRetryableException(TakeAwayRuntimeException.class);

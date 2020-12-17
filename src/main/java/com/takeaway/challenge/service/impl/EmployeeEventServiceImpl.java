@@ -20,6 +20,12 @@ public class EmployeeEventServiceImpl implements EmployeeEventService {
         this.employeeEventEntityRepository = employeeEventEntityRepository;
     }
 
+    /**
+     * This method in charge of fetching the employee events for the given employeeId
+     *
+     * @param employeeId
+     * @return
+     */
     @Override
     public List<EmployeeEventEntity> getEventListByEmployeeId(String employeeId) {
 

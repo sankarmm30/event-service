@@ -33,7 +33,17 @@ public class EmployeeAvroKafkaListenerServiceImpl {
         this.employeeEventEntityRepository = employeeEventEntityRepository;
     }
 
-    @KafkaListener(topics = "${kafka.consumer.employee.topic}", containerGroup = "${kafka.consumer.group.id}")
+    /**
+     * This method is in charge of listening to kafka topic and load the event data into table.
+     * If in case of any errors, then it retries for 3 times by default.
+     *
+     * @param employeeEventValue
+     * @param employeeEventKey
+     * @param topic
+     * @param partition
+     * @param offset
+     */
+    @KafkaListener(topics = "${kafka.consumer.employee.topic}", containerGroup = "${spring.kafka.consumer.group-id}")
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = {Exception.class})
     public void consume(@Payload EmployeeEventValue employeeEventValue,
                         @Header(KafkaHeaders.RECEIVED_MESSAGE_KEY) EmployeeEventKey employeeEventKey,
