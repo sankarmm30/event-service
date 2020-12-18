@@ -1,27 +1,15 @@
-version: '3.3'
-
+version: '3'
 services:
-  db:
-    image: mysql:5.7
-    restart: always
-    environment:
-      MYSQL_DATABASE: 'db_event'
-      # So you don't have to use root, but you can if you like
-      MYSQL_USER: 'user'
-      # You can use whatever password you like
-      MYSQL_PASSWORD: 'password'
-      # Password for root access
-      MYSQL_ROOT_PASSWORD: 'password'
+  event-service:
+    image: takeaway/bob-challenge-event-service:1.0.0
+    container_name: event-service
     ports:
-      # <Port exposed> : < MySQL Port running inside container>
-      - '3309:3306'
-    expose:
-      # Opens port 3309 on the container
-      - '3306'
-      # Where our data will be persisted
-    volumes:
-      - my-db:/var/lib/mysql
+      - 8090:8090
+    environment:
+      - 'JAVA_OPTS= -Dlogging.config=classpath:logback-local.xml -Dspring.profiles.active=local'
+    networks:
+      - local_default
 
-# Names our volume
-volumes:
-  my-db:
+networks:
+  local_default:
+    external: true
