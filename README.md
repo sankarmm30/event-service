@@ -40,7 +40,7 @@ mvn clean install -DskipTests
 ```bash
 docker build . --tag=takeaway/bob-challenge-event-service:1.0.0
 
-# Please below command when you want to push the image to docker registry
+# Please execute the below command when you want to push the image to docker registry
 
 docker push takeaway/bob-challenge-event-service:1.0.0
 ```

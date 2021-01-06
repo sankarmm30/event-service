@@ -1,7 +1,9 @@
 package com.takeaway.challenge.service;
 
+import com.takeaway.challenge.dto.response.EmployeeEventDataResponseDto;
 import com.takeaway.challenge.exception.EmployeeEventNotFoundException;
 import com.takeaway.challenge.exception.TakeAwayClientRuntimeException;
+import com.takeaway.challenge.exception.TakeAwayServerRuntimeException;
 import com.takeaway.challenge.model.EmployeeEventEntity;
 import com.takeaway.challenge.repository.EmployeeEventEntityRepository;
 import com.takeaway.challenge.service.impl.EmployeeEventServiceImpl;
@@ -86,6 +88,28 @@ public class EmployeeEventServiceImplTest {
 
         // When employeeId is null
         this.employeeEventService.getEventListByEmployeeId("  ");
+    }
+
+    @Test(expected = TakeAwayServerRuntimeException.class)
+    public void testGetEventListByEmployeeIdWhenUnexpectedException() {
+
+        // when
+        Mockito.when(this.employeeEventEntityRepository.findByEmployeeIdOrderByEventTimeAsc(Mockito.eq(EMPLOYEE_ID)))
+                .thenThrow(new IllegalStateException());
+
+        this.employeeEventService.getEventListByEmployeeId(EMPLOYEE_ID);
+    }
+
+    @Test
+    public void testGetEmployeeEventDataValid() {
+
+        EmployeeEventDataResponseDto employeeEventDataResponseDto = this.employeeEventService.getEmployeeEventData(EMPLOYEE_ID);
+
+        Assert.assertNotNull(employeeEventDataResponseDto);
+        Assert.assertFalse(employeeEventDataResponseDto.getEmployeeEvents().isEmpty());
+        Assert.assertEquals(2, employeeEventDataResponseDto.getEmployeeEvents().size());
+        Assert.assertEquals(EVENT_TYPE_CREATED, employeeEventDataResponseDto.getEmployeeEvents().get(0).getEventType());
+        Assert.assertEquals(EVENT_TYPE_UPDATED, employeeEventDataResponseDto.getEmployeeEvents().get(1).getEventType());
     }
 
     private List<EmployeeEventEntity> getEmployeeEventEntityList() {
