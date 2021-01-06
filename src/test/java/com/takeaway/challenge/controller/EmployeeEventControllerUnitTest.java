@@ -1,11 +1,12 @@
 package com.takeaway.challenge.controller;
 
 import com.takeaway.challenge.EmployeeEventType;
+import com.takeaway.challenge.dto.response.EmployeeEvent;
+import com.takeaway.challenge.dto.response.EmployeeEventDataResponseDto;
 import com.takeaway.challenge.exception.EmployeeEventNotFoundException;
 import com.takeaway.challenge.exception.TakeAwayClientRuntimeException;
 import com.takeaway.challenge.exception.TakeAwayServerRuntimeException;
 import com.takeaway.challenge.exception.advice.GenericExceptionHandlerAdvice;
-import com.takeaway.challenge.model.EmployeeEventEntity;
 import com.takeaway.challenge.service.EmployeeEventService;
 import io.restassured.http.ContentType;
 import io.restassured.module.mockmvc.RestAssuredMockMvc;
@@ -45,8 +46,8 @@ public class EmployeeEventControllerUnitTest {
 
         RestAssuredMockMvc.standaloneSetup(employeeEventController, genericExceptionHandlerAdvice);
 
-        Mockito.when(employeeEventService.getEventListByEmployeeId(Mockito.anyString()))
-                .thenReturn(Collections.singletonList(getEmployeeEventEntity()));
+        Mockito.when(employeeEventService.getEmployeeEventData(Mockito.anyString()))
+                .thenReturn(getEmployeeEventDataResponse());
     }
 
     @Test
@@ -65,7 +66,7 @@ public class EmployeeEventControllerUnitTest {
     @Test
     public void testGetEmployeeDetailsWhenNoDataFound() {
 
-        Mockito.when(employeeEventService.getEventListByEmployeeId(Mockito.anyString()))
+        Mockito.when(employeeEventService.getEmployeeEventData(Mockito.anyString()))
                 .thenThrow(new EmployeeEventNotFoundException());
 
         RestAssuredMockMvc.given()
@@ -81,7 +82,7 @@ public class EmployeeEventControllerUnitTest {
     @Test
     public void testGetEmployeeDetailsWhenUnexpectedException() {
 
-        Mockito.when(employeeEventService.getEventListByEmployeeId(Mockito.anyString()))
+        Mockito.when(employeeEventService.getEmployeeEventData(Mockito.anyString()))
                 .thenThrow(new TakeAwayServerRuntimeException("Test Exception"));
 
         RestAssuredMockMvc.given()
@@ -97,7 +98,7 @@ public class EmployeeEventControllerUnitTest {
     @Test
     public void testGetEmployeeDetailsWhenClientExceptionBadRequest() {
 
-        Mockito.when(employeeEventService.getEventListByEmployeeId(Mockito.anyString()))
+        Mockito.when(employeeEventService.getEmployeeEventData(Mockito.anyString()))
                 .thenThrow(new TakeAwayClientRuntimeException("Test Exception"));
 
         RestAssuredMockMvc.given()
@@ -110,10 +111,16 @@ public class EmployeeEventControllerUnitTest {
                 .body("", Matchers.aMapWithSize(5));
     }
 
-    private EmployeeEventEntity getEmployeeEventEntity() {
+    private EmployeeEventDataResponseDto getEmployeeEventDataResponse() {
 
-        return EmployeeEventEntity.builder()
-                .eventType(EmployeeEventType.CREATED.name())
-                .eventTime(ZonedDateTime.now()).build();
+        return EmployeeEventDataResponseDto.builder()
+                .employeeEvents(
+                        Collections.singletonList(
+                                EmployeeEvent.builder()
+                                        .eventType(EmployeeEventType.CREATED.name())
+                                        .eventTime(ZonedDateTime.now())
+                                        .build()
+                        ))
+                .build();
     }
 }
