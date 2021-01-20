@@ -1,7 +1,7 @@
 version: '3'
 services:
   event-service:
-    image: takeaway/bob-challenge-event-service:1.0.0
+    image: sandemo/event-service:1.0.0
     container_name: event-service
     ports:
       - 8090:8090
